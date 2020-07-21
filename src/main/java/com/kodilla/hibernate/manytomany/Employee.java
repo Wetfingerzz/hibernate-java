@@ -5,10 +5,20 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@NamedQuery(
-        name = "Employee.findEmployeeByLastname",
-        query = "FROM Employee WHERE lastname = :LASTNAME"
-)
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Employee.findEmployeeByLastname",
+                query = "FROM Employee WHERE lastname = :LASTNAME",
+                resultClass = Employee.class
+        ),
+        @NamedNativeQuery(
+                name = "Employee.findEmployeeByAnyGivenSeriesOfLetters",
+                query = "FROM Employee WHERE lastname LIKE CONCAT ('%' :ARG '%')",
+                resultClass = Employee.class
+
+        ),
+
+})
 @Entity
 @Table(name = "EMPLOYEES")
 public class Employee {
@@ -24,6 +34,7 @@ public class Employee {
         this.firstname = firstname;
         this.lastname = lastname;
     }
+
     @Id
     @GeneratedValue
     @NotNull
@@ -35,10 +46,12 @@ public class Employee {
     public void setId(int id) {
         this.id = id;
     }
+
     @Column(name = "FIRSTNAME")
     public String getFirstname() {
         return firstname;
     }
+
     @Column(name = "LASTNAME")
     public void setFirstname(String firstname) {
         this.firstname = firstname;
@@ -51,6 +64,7 @@ public class Employee {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "JOIN_COMPANY_EMPLOYEE",
